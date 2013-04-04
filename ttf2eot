@@ -1,0 +1,3 @@
+#!/usr/bin/env node
+
+require('./ttf2eot.js');

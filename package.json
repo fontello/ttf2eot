@@ -1,0 +1,37 @@
+{
+  "name"            : "ttf2eot",
+
+  "version"         : "1.0.0",
+
+  "description"     : "Convert TTF font to EOT",
+  "keywords"        : ["font", "ttf", "eot", "convertor"],
+  "homepage"        : "https://github.com/nodeca/ttf2eot",
+  "author"          : {
+                        "name"  : "Viktor Semykin",
+                        "email" : "thesame.ml@gmail.com"
+                      },
+
+  "bugs"            : { "url": "https://github.com/fontello/ttf2eot/issues" },
+
+  "dependencies"    : { "argparse": "~0.1.12" },
+
+  "license"         : {
+                        "type": "MIT",
+                        "url": "https://github.com/fontello/ttf2eot/blob/master/LICENSE"
+                      },
+
+  "repository"      : {
+                        "type": "git",
+                        "url": "git://github.com/fontello/ttf2eot.git"
+                      },
+
+  "bin"             : "./ttf2eot",
+
+  "licenses"        : [
+                        {
+                          "type": "MIT",
+                          "url": "https://github.com/fontello/ttf2eot/raw/master/LICENSE"
+                        }
+                      ]
+}
+
