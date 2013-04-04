@@ -1,5 +1,5 @@
 /*
-    Author: Victor Semykin <thesame.ml@gmail.com>
+    Author: Viktor Semykin <thesame.ml@gmail.com>
 
     Written for fontello.com project.
 */

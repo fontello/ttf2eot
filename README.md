@@ -34,7 +34,7 @@ In this condition is not satisfyed, then font will not be shown in IE.
 Authors
 -------
 
-* Victor Semykin <thesame.ml@gmail.com>
+* Viktor Semykin <thesame.ml@gmail.com>
 
 
 License
