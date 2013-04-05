@@ -225,38 +225,49 @@ function ttf2eot(buf) {
 }
 
 var parser = new ArgumentParser ({
-  version: '0.0.1',
+  version: require('./package.json').version,
   addHelp: true,
   description: 'TTF to EOT font converter'
 });
 
 parser.addArgument (
-  ['-i', '--input'],
+  [ 'infile' ],
   {
-    help: 'Input file',
-    required: true
+    nargs: '?',
+    help: 'Input file (stdin if not defined)'
   }
 );
 
 parser.addArgument (
-  ['-o', '--output'],
+  [ 'outfile' ],
   {
-    help: 'Output file',
-    required: true
+    nargs: '?',
+    help: 'Output file (stdout if not defined)'
   }
 );
 
 var args = parser.parseArgs();
 
-var ttf;
+var ttf, size;
 
 try {
-  ttf = fs.readFileSync(args.input);
+  if (args.infile) {
+    ttf = fs.readFileSync(args.infile);
+  } else {
+    size = fs.fstatSync(process.stdin.fd).size;
+    ttf = new Buffer(size);
+    fs.readSync(process.stdin.fd, ttf, 0, size, 0);
+  }
 } catch(e) {
-  console.log("Can't open file " + args.input);
+  console.error("Can't open input file (%s)", args.infile || 'stdin');
   process.exit(1);
 }
 
 var eot = ttf2eot(ttf);
-fs.writeFileSync(args.output, eot);
+
+if (args.outfile) { 
+  fs.writeFileSync(args.outfile, eot);
+} else {
+  process.stdout.write(eot);
+}
 
