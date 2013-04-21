@@ -25,7 +25,9 @@
                         "url": "git://github.com/fontello/ttf2eot.git"
                       },
 
-  "bin"             : "./ttf2eot",
+  "bin"             : {
+                        "ttf2eot": "./ttf2eot.js"
+                      },
 
   "licenses"        : [
                         {

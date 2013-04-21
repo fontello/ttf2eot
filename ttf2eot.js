@@ -1,3 +1,4 @@
+#!/usr/bin/env node
 /*
     Author: Viktor Semykin <thesame.ml@gmail.com>
 
