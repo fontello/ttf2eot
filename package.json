@@ -25,6 +25,8 @@
                         "url": "git://github.com/fontello/ttf2eot.git"
                       },
 
+  "main"            : "./index.js",
+
   "bin"             : {
                         "ttf2eot": "./ttf2eot.js"
                       },

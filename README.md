@@ -15,10 +15,10 @@ Install:
 npm install -g ttf2eot
 ```
 
-Usage:
+Usage example:
 
 ``` bash
-ttf2eot -i fontello.ttf -o fontello.oet
+ttf2eot fontello.ttf fontello.oet
 ```
 
 Or:
