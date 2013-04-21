@@ -54,7 +54,7 @@ try {
 
 var eot = ttf2eot(ttf);
 
-if (args.outfile) { 
+if (args.outfile) {
   fs.writeFileSync(args.outfile, eot);
 } else {
   process.stdout.write(eot);
