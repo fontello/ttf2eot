@@ -1,8 +1,9 @@
 ttf2eot
 =======
 
-This is node.js port of [ttf2eot](http://code.google.com/p/ttf2eot/). It
-converts TTF fonts to EOT format.
+ttf2eot converts TTF fonts to EOT format. That can be useful for different
+webfont generation tools. This is node.js port of
+[ttf2eot](http://code.google.com/p/ttf2eot/).
 
 
 Usage
@@ -18,6 +19,12 @@ Usage:
 
 ``` bash
 ttf2eot -i fontello.ttf -o fontello.oet
+```
+
+Or:
+
+``` bash
+ttf2eot < fontello.ttf > fontello.oet
 ```
 
 
@@ -40,7 +47,7 @@ Authors
 License
 -------
 
-Copyright (c) 2012 [Vitaly Puzrin](https://github.com/puzrin).
+Copyright (c) 2013 [Vitaly Puzrin](https://github.com/puzrin).
 Released under the MIT license. See
 [LICENSE](https://github.com/nodeca/ttf2eot/blob/master/LICENSE) for details.
 
