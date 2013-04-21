@@ -2,8 +2,9 @@ ttf2eot
 =======
 
 ttf2eot converts TTF fonts to EOT format. That can be useful for different
-webfont generation tools. This is node.js port of
-[ttf2eot](http://code.google.com/p/ttf2eot/).
+webfont generation tools.
+
+This is node.js port of [ttf2eot](http://code.google.com/p/ttf2eot/).
 
 
 Usage
@@ -18,13 +19,13 @@ npm install -g ttf2eot
 Usage example:
 
 ``` bash
-ttf2eot fontello.ttf fontello.oet
+ttf2eot fontello.ttf fontello.eot
 ```
 
 Or:
 
 ``` bash
-ttf2eot < fontello.ttf > fontello.oet
+ttf2eot < fontello.ttf > fontello.eot
 ```
 
 
