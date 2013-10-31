@@ -37,22 +37,23 @@ parser.addArgument (
 
 var args = parser.parseArgs();
 
-var ttf, size;
+var input, size;
 
 try {
   if (args.infile) {
-    ttf = fs.readFileSync(args.infile);
+    input = fs.readFileSync(args.infile);
   } else {
     size = fs.fstatSync(process.stdin.fd).size;
-    ttf = new Buffer(size);
-    fs.readSync(process.stdin.fd, ttf, 0, size, 0);
+    input = new Buffer(size);
+    fs.readSync(process.stdin.fd, input, 0, size, 0);
   }
 } catch(e) {
   console.error("Can't open input file (%s)", args.infile || 'stdin');
   process.exit(1);
 }
 
-var eot = ttf2eot(ttf);
+var ttf = Array.prototype.slice.call(input, 0);
+var eot = new Buffer(ttf2eot(ttf).buffer);
 
 if (args.outfile) {
   fs.writeFileSync(args.outfile, eot);
