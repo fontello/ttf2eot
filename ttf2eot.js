@@ -52,7 +52,7 @@ try {
   process.exit(1);
 }
 
-var ttf = Array.prototype.slice.call(input, 0);
+var ttf = new Uint8Array(input);
 var eot = new Buffer(ttf2eot(ttf).buffer);
 
 if (args.outfile) {

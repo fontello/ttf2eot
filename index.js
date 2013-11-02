@@ -100,6 +100,12 @@ function strbuf(str) {
   return b;
 }
 
+// Takes TTF font on input and returns ByteBuffer with EOT font
+//
+// Params:
+//
+// - arr(Array|Uint8Array)
+//
 function ttf2eot(arr) {
   var buf = new ByteBuffer(arr);
   var out = new ByteBuffer(new Array(SIZEOF.EOT_PREFIX))
@@ -207,18 +213,30 @@ function ttf2eot(arr) {
     throw new Error ('Required section not found');
   }
 
-  out = new ByteBuffer(
-    out.buffer.concat(
-      familyName.buffer,
-      subfamilyName.buffer,
-      versionString.buffer,
-      fullName.buffer,
-      [0, 0] // padding
-    ));
+  // Calculate final length
+  var len =
+   out.length +
+   familyName.length +
+   subfamilyName.length +
+   versionString.length +
+   fullName.length +
+   2 +
+   buf.length;
 
-  out.setUint32(EOT_OFFSET.LENGTH, out.length + buf.length, true); // Calculate overall length
+  // Create final buffer with the the same array type as input one.
+  var eot = new ByteBuffer(Array.isArray(arr) ? new Array(len) : new Uint8Array(len));
 
-  return new ByteBuffer(out.buffer.concat(buf.buffer));
+  eot.writeBytes(out.buffer);
+  eot.writeBytes(familyName.buffer);
+  eot.writeBytes(subfamilyName.buffer);
+  eot.writeBytes(versionString.buffer);
+  eot.writeBytes(fullName.buffer);
+  eot.writeBytes([0, 0]);
+  eot.writeBytes(buf.buffer);
+
+  eot.setUint32(EOT_OFFSET.LENGTH, len, true); // Calculate overall length
+
+  return eot;
 }
 
 module.exports = ttf2eot;
