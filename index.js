@@ -134,7 +134,7 @@ function ttf2eot(arr) {
   {
     var data = new ByteBuffer(buf, SIZEOF.SFNT_HEADER + i*SIZEOF.SFNT_TABLE_ENTRY);
     var tableEntry = {
-      tag: data.toString (SFNT_OFFSET.TABLE_TAG, SFNT_OFFSET.TABLE_TAG + 4),
+      tag: data.toString (SFNT_OFFSET.TABLE_TAG, 4),
       offset: data.getUint32 (SFNT_OFFSET.TABLE_OFFSET),
       length: data.getUint32 (SFNT_OFFSET.TABLE_LENGTH)
     };
