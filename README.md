@@ -48,7 +48,7 @@ Authors
 License
 -------
 
-Copyright (c) 2013 [Vitaly Puzrin](https://github.com/puzrin).
+Copyright (c) 2013-2016 [Vitaly Puzrin](https://github.com/puzrin).
 Released under the MIT license. See
 [LICENSE](https://github.com/nodeca/ttf2eot/blob/master/LICENSE) for details.
 

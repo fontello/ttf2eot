@@ -1,6 +1,6 @@
 {
   "name": "ttf2eot",
-  "version": "1.3.0",
+  "version": "2.0.0",
   "description": "Convert TTF font to EOT",
   "keywords": [
     "font",
@@ -15,7 +15,8 @@
     "ttf2eot": "./ttf2eot.js"
   },
   "files": [
-    "index.js"
+    "index.js",
+    "ttf2eot.js"
   ],
   "scripts": {
     "lint": "./node_modules/.bin/eslint .",
