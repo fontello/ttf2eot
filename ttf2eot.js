@@ -35,6 +35,8 @@ parser.addArgument (
   }
 );
 
+/* eslint-disable no-console */
+
 var args = parser.parseArgs();
 
 var input, size;
@@ -47,7 +49,7 @@ try {
     input = new Buffer(size);
     fs.readSync(process.stdin.fd, input, 0, size, 0);
   }
-} catch(e) {
+} catch (e) {
   console.error("Can't open input file (%s)", args.infile || 'stdin');
   process.exit(1);
 }
