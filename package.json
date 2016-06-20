@@ -11,6 +11,7 @@
   "author": "Viktor Semykin <thesame.ml@gmail.com>",
   "license": "MIT",
   "repository": "fontello/ttf2eot",
+  "main": "index.js",
   "bin": {
     "ttf2eot": "./ttf2eot.js"
   },
