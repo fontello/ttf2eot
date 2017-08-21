@@ -32,12 +32,12 @@ ttf2eot < fontello.ttf > fontello.eot
 Possible problems
 -----------------
 
-Due to bug in IE, font `FullName` __MUST__ begin with `FamilyName`. For example,
-if `FamilyName` is `fontello`, then `FullName` should be `fontello regular` and
-so on.
+Due to bug in IE, the font `FullName` __MUST__ begin with `FamilyName` in the `name` table of ttf file. For example,
+if `FamilyName` is `fontello`, then `FullName` should be `fontello regular` and so on.
 
 In this condition is not satisfyed, then font will not be shown in IE.
 
+See http://scripts.sil.org/cms/scripts/page.php?site_id=nrsi&id=iws-chapter08#3054f18b for info about TTF format and `name` table.
 
 Authors
 -------
