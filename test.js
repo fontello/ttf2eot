@@ -11,5 +11,5 @@ it('bin compare', function () {
   var src = new Uint8Array(fs.readFileSync('./fixtures/test.ttf'));
   var dst = new Uint8Array(fs.readFileSync('./fixtures/test.eot'));
 
-  assert.deepEqual(ttf2eot(src).buffer, dst);
+  assert.deepEqual(ttf2eot(src), dst);
 });

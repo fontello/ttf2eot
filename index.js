@@ -6,7 +6,6 @@
 
 'use strict';
 
-var ByteBuffer = require('microbuffer');
 
 /**
  * Offsets in EOT file structure. Refer to EOTPrefix in OpenTypeUtilities.cpp
@@ -87,104 +86,108 @@ var MAGIC = {
  * chars prefixed with length and suffixed with zero
  */
 function strbuf(str) {
-  var b = new ByteBuffer(str.length + 4);
+  var arr = Buffer.alloc(str.length + 4);
 
-  b.setUint16 (0, str.length, true);
+  arr.writeUint16LE(str.length, 0);
 
   for (var i = 0; i < str.length; i += 2) {
-    b.setUint16 (i + 2, str.getUint16 (i), true);
+    arr.writeUint16LE(str.readUint16BE(i), i + 2);
   }
 
-  b.setUint16 (b.length - 2, 0, true);
+  arr.writeUint16LE(0, arr.length - 2);
 
-  return b;
+  return arr;
 }
 
-// Takes TTF font on input and returns ByteBuffer with EOT font
+// Takes TTF font on input and returns Uint8Array with EOT font
 //
 // Params:
 //
-// - arr(Array|Uint8Array)
+// - arr(Uint8Array)
 //
 function ttf2eot(arr) {
-  var buf = new ByteBuffer(arr);
-  var out = new ByteBuffer(SIZEOF.EOT_PREFIX),
-      i, j;
+  arr = Buffer.from(arr.buffer, arr.byteOffset, arr.length);
 
-  out.fill(0);
-  out.setUint32(EOT_OFFSET.FONT_LENGTH, buf.length, true);
-  out.setUint32(EOT_OFFSET.VERSION, MAGIC.EOT_VERSION, true);
-  out.setUint8(EOT_OFFSET.CHARSET, MAGIC.EOT_CHARSET);
-  out.setUint16(EOT_OFFSET.MAGIC, MAGIC.EOT_MAGIC, true);
+  var out = Buffer.alloc(SIZEOF.EOT_PREFIX, 0);
+  var i, j;
 
-  var familyName = [],
-      subfamilyName = [],
-      fullName = [],
-      versionString = [];
+  out.writeUint32LE (arr.length, EOT_OFFSET.FONT_LENGTH);
+  out.writeUint32LE (MAGIC.EOT_VERSION, EOT_OFFSET.VERSION);
+  out.writeUint8 (MAGIC.EOT_CHARSET, EOT_OFFSET.CHARSET);
+  out.writeUint16LE (MAGIC.EOT_MAGIC, EOT_OFFSET.MAGIC);
+
+  var familyName = Buffer.of(0),
+      subfamilyName = Buffer.of(0),
+      fullName = Buffer.of(0),
+      versionString = Buffer.of(0);
 
   var haveOS2 = false,
       haveName = false,
       haveHead = false;
 
-  var numTables = buf.getUint16 (SFNT_OFFSET.NUMTABLES);
+  var numTables = arr.readUint16BE (SFNT_OFFSET.NUMTABLES);
 
   for (i = 0; i < numTables; ++i) {
-    var data = new ByteBuffer(buf, SIZEOF.SFNT_HEADER + i * SIZEOF.SFNT_TABLE_ENTRY);
+    var data = arr.subarray(SIZEOF.SFNT_HEADER + i * SIZEOF.SFNT_TABLE_ENTRY);
     var tableEntry = {
-      tag: data.toString (SFNT_OFFSET.TABLE_TAG, 4),
-      offset: data.getUint32 (SFNT_OFFSET.TABLE_OFFSET),
-      length: data.getUint32 (SFNT_OFFSET.TABLE_LENGTH)
+      tag: String.fromCharCode.apply(null, data.subarray(SFNT_OFFSET.TABLE_TAG, SFNT_OFFSET.TABLE_TAG + 4)),
+      offset: data.readUint32BE (SFNT_OFFSET.TABLE_OFFSET),
+      length: data.readUint32BE (SFNT_OFFSET.TABLE_LENGTH)
     };
 
-    var table = new ByteBuffer(buf, tableEntry.offset, tableEntry.length);
+    var table = arr.subarray(tableEntry.offset, tableEntry.offset + tableEntry.length);
 
     if (tableEntry.tag === 'OS/2') {
       haveOS2 = true;
 
       for (j = 0; j < 10; ++j) {
-        out.setUint8 (EOT_OFFSET.FONT_PANOSE + j, table.getUint8 (SFNT_OFFSET.OS2_FONT_PANOSE + j));
+        out.writeUint8 (table.readUint8 (SFNT_OFFSET.OS2_FONT_PANOSE + j), EOT_OFFSET.FONT_PANOSE + j);
       }
 
       /*jshint bitwise:false */
-      out.setUint8 (EOT_OFFSET.ITALIC, table.getUint16 (SFNT_OFFSET.OS2_FS_SELECTION) & 0x01);
-      out.setUint32 (EOT_OFFSET.WEIGHT, table.getUint16 (SFNT_OFFSET.OS2_WEIGHT), true);
+      out.writeUint8 (table.readUint16BE (SFNT_OFFSET.OS2_FS_SELECTION) & 0x01, EOT_OFFSET.ITALIC);
+      out.writeUint32LE (table.readUint16BE (SFNT_OFFSET.OS2_WEIGHT), EOT_OFFSET.WEIGHT);
 
       for (j = 0; j < 4; ++j) {
-        out.setUint32 (EOT_OFFSET.UNICODE_RANGE + j * 4, table.getUint32 (SFNT_OFFSET.OS2_UNICODE_RANGE + j * 4), true);
+        out.writeUint32LE (table.readUint32BE (SFNT_OFFSET.OS2_UNICODE_RANGE + j * 4),
+          EOT_OFFSET.UNICODE_RANGE + j * 4);
       }
 
       for (j = 0; j < 2; ++j) {
-        out.setUint32 (EOT_OFFSET.CODEPAGE_RANGE + j * 4, table.getUint32 (SFNT_OFFSET.OS2_CODEPAGE_RANGE + j * 4), true);
+        out.writeUint32LE (table.readUint32BE (SFNT_OFFSET.OS2_CODEPAGE_RANGE + j * 4),
+          EOT_OFFSET.CODEPAGE_RANGE + j * 4);
       }
 
     } else if (tableEntry.tag === 'head') {
 
       haveHead = true;
-      out.setUint32 (EOT_OFFSET.CHECKSUM_ADJUSTMENT, table.getUint32 (SFNT_OFFSET.HEAD_CHECKSUM_ADJUSTMENT), true);
+      out.writeUint32LE (table.readUint32BE (SFNT_OFFSET.HEAD_CHECKSUM_ADJUSTMENT), EOT_OFFSET.CHECKSUM_ADJUSTMENT);
 
     } else if (tableEntry.tag === 'name') {
 
       haveName = true;
 
       var nameTable = {
-        format: table.getUint16 (SFNT_OFFSET.NAMETABLE_FORMAT),
-        count: table.getUint16 (SFNT_OFFSET.NAMETABLE_COUNT),
-        stringOffset: table.getUint16 (SFNT_OFFSET.NAMETABLE_STRING_OFFSET)
+        format: table.readUint16BE (SFNT_OFFSET.NAMETABLE_FORMAT),
+        count: table.readUint16BE (SFNT_OFFSET.NAMETABLE_COUNT),
+        stringOffset: table.readUint16BE (SFNT_OFFSET.NAMETABLE_STRING_OFFSET)
       };
 
       for (j = 0; j < nameTable.count; ++j) {
-        var nameRecord = new ByteBuffer(table, SIZEOF.SFNT_NAMETABLE + j * SIZEOF.SFNT_NAMETABLE_ENTRY);
+        var nameRecord = table.subarray(SIZEOF.SFNT_NAMETABLE + j * SIZEOF.SFNT_NAMETABLE_ENTRY);
         var name = {
-          platformID: nameRecord.getUint16 (SFNT_OFFSET.NAME_PLATFORM_ID),
-          encodingID: nameRecord.getUint16 (SFNT_OFFSET.NAME_ENCODING_ID),
-          languageID: nameRecord.getUint16 (SFNT_OFFSET.NAME_LANGUAGE_ID),
-          nameID: nameRecord.getUint16 (SFNT_OFFSET.NAME_NAME_ID),
-          length: nameRecord.getUint16 (SFNT_OFFSET.NAME_LENGTH),
-          offset: nameRecord.getUint16 (SFNT_OFFSET.NAME_OFFSET)
+          platformID: nameRecord.readUint16BE (SFNT_OFFSET.NAME_PLATFORM_ID),
+          encodingID: nameRecord.readUint16BE (SFNT_OFFSET.NAME_ENCODING_ID),
+          languageID: nameRecord.readUint16BE (SFNT_OFFSET.NAME_LANGUAGE_ID),
+          nameID: nameRecord.readUint16BE (SFNT_OFFSET.NAME_NAME_ID),
+          length: nameRecord.readUint16BE (SFNT_OFFSET.NAME_LENGTH),
+          offset: nameRecord.readUint16BE (SFNT_OFFSET.NAME_OFFSET)
         };
 
         if (name.platformID === 3 && name.encodingID === 1 && name.languageID === MAGIC.LANGUAGE_ENGLISH) {
-          var s = strbuf (new ByteBuffer(table, nameTable.stringOffset + name.offset, name.length));
+          var s = strbuf(table.subarray(
+            nameTable.stringOffset + name.offset,
+            nameTable.stringOffset + name.offset + name.length));
 
           switch (name.nameID) {
             case 1:
@@ -210,30 +213,20 @@ function ttf2eot(arr) {
     throw new Error ('Required section not found');
   }
 
-  // Calculate final length
-  var len =
-   out.length +
-   familyName.length +
-   subfamilyName.length +
-   versionString.length +
-   fullName.length +
-   2 +
-   buf.length;
-
   // Create final buffer with the the same array type as input one.
-  var eot = new ByteBuffer(len);
+  var eot = Buffer.concat([
+    out,
+    familyName,
+    subfamilyName,
+    versionString,
+    fullName,
+    Buffer.from([ 0, 0 ]),
+    arr
+  ]);
 
-  eot.writeBytes(out.buffer);
-  eot.writeBytes(familyName.buffer);
-  eot.writeBytes(subfamilyName.buffer);
-  eot.writeBytes(versionString.buffer);
-  eot.writeBytes(fullName.buffer);
-  eot.writeBytes([ 0, 0 ]);
-  eot.writeBytes(buf.buffer);
+  eot.writeUint32LE (eot.length, EOT_OFFSET.LENGTH); // Calculate overall length
 
-  eot.setUint32(EOT_OFFSET.LENGTH, len, true); // Calculate overall length
-
-  return eot;
+  return new Uint8Array(eot.buffer, eot.byteOffset, eot.length);
 }
 
 module.exports = ttf2eot;

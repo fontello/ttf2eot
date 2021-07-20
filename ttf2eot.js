@@ -54,8 +54,7 @@ try {
   process.exit(1);
 }
 
-var ttf = new Uint8Array(input);
-var eot = new Buffer(ttf2eot(ttf).buffer);
+var eot = ttf2eot(input);
 
 if (args.outfile) {
   fs.writeFileSync(args.outfile, eot);
