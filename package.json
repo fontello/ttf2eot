@@ -23,7 +23,7 @@
     "test": "npm run lint && ./node_modules/.bin/mocha"
   },
   "dependencies": {
-    "argparse": "^1.0.6"
+    "argparse": "^2.0.1"
   },
   "devDependencies": {
     "eslint": "^2.3.0",
