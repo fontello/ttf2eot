@@ -1,6 +1,6 @@
 {
   "name": "ttf2eot",
-  "version": "3.0.0",
+  "version": "3.1.0",
   "description": "Convert TTF font to EOT",
   "keywords": [
     "font",
