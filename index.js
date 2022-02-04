@@ -139,6 +139,7 @@ function ttf2eot(arr) {
 
     if (tableEntry.tag === 'OS/2') {
       haveOS2 = true;
+      var OS2Version = table.readUint16BE();
 
       for (j = 0; j < 10; ++j) {
         out.writeUint8 (table.readUint8 (SFNT_OFFSET.OS2_FONT_PANOSE + j), EOT_OFFSET.FONT_PANOSE + j);
@@ -153,10 +154,13 @@ function ttf2eot(arr) {
           EOT_OFFSET.UNICODE_RANGE + j * 4);
       }
 
-      for (j = 0; j < 2; ++j) {
-        out.writeUint32LE (table.readUint32BE (SFNT_OFFSET.OS2_CODEPAGE_RANGE + j * 4),
-          EOT_OFFSET.CODEPAGE_RANGE + j * 4);
+      if (OS2Version >= 1) {
+        for (j = 0; j < 2; ++j) {
+          out.writeUint32LE (table.readUint32BE (SFNT_OFFSET.OS2_CODEPAGE_RANGE + j * 4),
+            EOT_OFFSET.CODEPAGE_RANGE + j * 4);
+        }
       }
+
 
     } else if (tableEntry.tag === 'head') {
 
