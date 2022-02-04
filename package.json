@@ -19,14 +19,14 @@
     "ttf2eot.js"
   ],
   "scripts": {
-    "lint": "./node_modules/.bin/eslint .",
-    "test": "npm run lint && ./node_modules/.bin/mocha"
+    "lint": "standardx . -v",
+    "test": "npm run lint && mocha"
   },
   "dependencies": {
     "argparse": "^2.0.1"
   },
   "devDependencies": {
-    "eslint": "^2.3.0",
-    "mocha": "^2.4.5"
+    "mocha": "^2.4.5",
+    "standardx": "^7.0.0"
   }
 }
